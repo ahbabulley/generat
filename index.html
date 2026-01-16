@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloudflare Link Generator</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; max-width: 500px; margin: auto; }
+        input, button { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
+        button { background: #007bff; color: white; cursor: pointer; border: none; }
+        #result { background: #f4f4f4; padding: 15px; word-break: break-all; display: none; border: 1px dashed #999; }
+    </style>
+</head>
+<body>
+    <h2>URL Preview Generator</h2>
+    <label>URL Domain Worker Anda:</label>
+    <input type="text" id="workerUrl" placeholder="https://link.domainanda.com" value="">
+    
+    <label>Judul Kustom:</label>
+    <input type="text" id="title" placeholder="Contoh: Promo Spesial Hari Ini">
+    
+    <label>URL Gambar (JPG/PNG):</label>
+    <input type="text" id="img" placeholder="https://website.com/gambar.jpg">
+    
+    <label>URL Tujuan Asli:</label>
+    <input type="text" id="dest" placeholder="https://shopee.co.id/produk-anda">
+
+    <button onclick="generateLink()">Buat Link Preview</button>
+
+    <div id="result">
+        <strong>Link Anda:</strong><br>
+        <span id="finalLink"></span>
+    </div>
+
+    <script>
+        function generateLink() {
+            const base = document.getElementById('workerUrl').value;
+            const t = encodeURIComponent(document.getElementById('title').value);
+            const i = encodeURIComponent(document.getElementById('img').value);
+            const d = encodeURIComponent(document.getElementById('dest').value);
+            
+            const fullLink = `${base}/?t=${t}&i=${i}&d=${d}`;
+            document.getElementById('finalLink').innerText = fullLink;
+            document.getElementById('result').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
