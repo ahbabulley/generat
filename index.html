@@ -3,46 +3,289 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloudflare Link Generator</title>
+    <title>ROWX BUILD</title>
+ <link rel="icon" href="sarong.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: sans-serif; padding: 20px; max-width: 500px; margin: auto; }
-        input, button { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
-        button { background: #007bff; color: white; cursor: pointer; border: none; }
-        #result { background: #f4f4f4; padding: 15px; word-break: break-all; display: none; border: 1px dashed #999; }
+        :root {
+            --bg: #f4f7fa; --card: #ffffff; --text: #1e293b; --text-sub: #64748b;
+            --border: #e2e8f0; --primary: #2563eb; --success: #10b981; --toast-bg: #1e293b;
+        }
+        [data-theme="dark"] {
+            --bg: #0f172a; --card: #1e293b; --text: #f1f5f9; --text-sub: #94a3b8;
+            --border: #334155; --primary: #3b82f6; --success: #34d399; --toast-bg: #ffffff;
+        }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; transition: 0.3s; }
+        
+        .container { 
+            width: 850px; height: 500px; background: var(--card); border-radius: 16px; 
+            border: 1px solid var(--border); display: grid; grid-template-columns: 320px 1fr; 
+            overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+        
+        .panel-left { 
+            padding: 24px; border-right: 1px solid var(--border); 
+            display: flex; flex-direction: column; 
+        }
+        
+        .panel-right { padding: 24px; background: rgba(0,0,0,0.01); display: flex; flex-direction: column; overflow: hidden; }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        h2 { font-size: 13px; font-weight: 800; margin: 0; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; }
+        
+        /* Preview Box - Diperbesar */
+        .preview-box { 
+            width: 100%; height: 130px; background: var(--bg); border-radius: 10px; 
+            border: 1px solid var(--border); display: flex; align-items: center; 
+            justify-content: center; font-size: 10px; font-weight: 600; color: var(--text-sub); 
+            background-size: cover; background-position: center; margin-bottom: 15px;
+        }
+
+        .input-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
+        .field-item { display: flex; flex-direction: column; gap: 4px; }
+        label { font-size: 10px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; }
+        
+        .field { position: relative; }
+        input { 
+            width: 100%; padding: 10px 35px 10px 12px; border: 1px solid var(--border); border-radius: 8px; 
+            background: var(--card); color: var(--text); font-size: 13px; outline: none; box-sizing: border-box; transition: 0.2s;
+        }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        
+        /* Hilangkan Scroller Qty */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+
+        .icon-btn { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-sub); cursor: pointer; padding: 4px; display: flex; align-items: center; transition: 0.2s; border-radius: 6px; }
+        
+        .row-group { display: flex; gap: 10px; }
+        .row-group > div:first-child { flex: 3; }
+        .row-group > div:last-child { flex: 1.2; }
+
+        /* Tombol Generate - Hover Effect */
+        .btn-gen { 
+            margin-top: 5px; width: 100%; padding: 14px; border: none; border-radius: 10px; font-weight: 700; 
+            font-size: 13px; cursor: pointer; display: flex; align-items: center; 
+            justify-content: center; gap: 8px; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); text-transform: uppercase;
+            background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+        }
+        .btn-gen:hover { background: #1d4ed8; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3); }
+
+        /* Footer Text */
+        .footer-text { font-size: 9px; color: var(--text-sub); text-align: center; margin-top: 10px; opacity: 0.7; letter-spacing: 0.5px; }
+
+        .copy-container { height: 45px; margin-bottom: 10px; }
+        .btn-copy-top { 
+            background: var(--success); color: white; padding: 10px; border-radius: 8px; 
+            display: none; width: 100%; border: none; font-weight: 700; cursor: pointer; 
+            text-transform: uppercase; font-size: 11px; align-items: center; justify-content: center; 
+            gap: 6px; transition: 0.3s;
+        }
+        .btn-copy-top:hover { filter: brightness(1.05); transform: scale(1.01); }
+
+        #list { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; scrollbar-width: none; }
+        #list::-webkit-scrollbar { display: none; }
+
+        .item { 
+            font-size: 11px; padding: 12px; background: var(--card); border: 1px solid var(--border); 
+            border-radius: 8px; color: var(--text-sub); font-family: 'Inter', monospace; 
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+            border-left: 4px solid var(--primary); animation: slideIn 0.3s ease forwards;
+        }
+
+        #toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: var(--toast-bg); color: var(--card); padding: 10px 24px; 
+            border-radius: 50px; font-size: 12px; font-weight: 600; transition: 0.4s;
+            z-index: 1000; box-shadow: 0 10px 25px rgba(0,0,0,0.2); opacity: 0;
+        }
+        #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
+        .empty-state { margin: auto; text-align: center; font-size: 12px; color: var(--text-sub); opacity: 0.5; }
     </style>
 </head>
-<body>
-    <h2>URL Preview Generator</h2>
-    <label>URL Domain Worker Anda:</label>
-    <input type="text" id="workerUrl" placeholder="https://link.domainanda.com" value="">
-    
-    <label>Judul Kustom:</label>
-    <input type="text" id="title" placeholder="Contoh: Promo Spesial Hari Ini">
-    
-    <label>URL Gambar (JPG/PNG):</label>
-    <input type="text" id="img" placeholder="https://website.com/gambar.jpg">
-    
-    <label>URL Tujuan Asli:</label>
-    <input type="text" id="dest" placeholder="https://shopee.co.id/produk-anda">
+<body data-theme="dark">
 
-    <button onclick="generateLink()">Buat Link Preview</button>
+<div class="container">
+    <div class="panel-left">
+        <div class="header">
+            <h2>FB COMMENT AUTOPLAY</h2>
+            <button class="icon-btn" style="position:static; transform:none;" onclick="toggleTheme()">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" id="theme-icon">
+                    <circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <div class="preview-box" id="p-box">AWAITING_MEDIA</div>
+        
+        <div class="input-group">
+            <div class="field-item">
+                <label>Image</label>
+                <div class="field">
+                    <input type="url" id="img" placeholder="https://..." oninput="updatePreview(this.value)">
+                    <button class="icon-btn" onclick="rollPinterest()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    </button>
+                </div>
+            </div>
 
-    <div id="result">
-        <strong>Link Anda:</strong><br>
-        <span id="finalLink"></span>
+            <div class="field-item">
+                <label>Custom Title</label>
+                <div class="field">
+                    <input type="text" id="title" placeholder="Randomize title...">
+                    <button class="icon-btn" onclick="rollTitle()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="row-group">
+                <div class="field-item">
+                    <label>Destination</label>
+                    <div class="field">
+                        <input type="url" id="dest" placeholder="Target URL...">
+                        <button class="icon-btn" onclick="rollRedirect()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="field-item">
+                    <label>Qty</label>
+                    <input type="number" id="qty" value="1" min="1">
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-gen" onclick="generate()">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+            Generate Links
+        </button>
+        <div class="footer-text">From arawhy rowx 2026 all right reserved</div>
     </div>
 
-    <script>
-        function generateLink() {
-            const base = document.getElementById('workerUrl').value;
-            const t = encodeURIComponent(document.getElementById('title').value);
-            const i = encodeURIComponent(document.getElementById('img').value);
-            const d = encodeURIComponent(document.getElementById('dest').value);
+    <div class="panel-right">
+        <div class="copy-container">
+            <button id="copyTopBtn" class="btn-copy-top" onclick="copyAll()">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
+                Copy All Results
+            </button>
+        </div>
+        <div id="list">
+            <div class="empty-state">RESULT URL</div>
+        </div>
+    </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+    /* ... logic tetap sama seperti sebelumnya ... */
+    const CONFIG = {
+        domains: "https://raw.githubusercontent.com/ahbabulley/generat/refs/heads/main/domains.json",
+        titles: "https://raw.githubusercontent.com/ahbabulley/generat/refs/heads/main/titles.json",
+        redirects: "https://raw.githubusercontent.com/ahbabulley/generat/refs/heads/main/directs.json", 
+        pinterest: "https://raw.githubusercontent.com/ahbabulley/generat/refs/heads/main/pumba.json" 
+    };
+
+    let results = [];
+
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.innerText = msg; t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2000);
+    }
+
+    function toggleTheme() {
+        const b = document.body;
+        const icon = document.getElementById('theme-icon');
+        const isL = b.getAttribute('data-theme') === 'dark';
+        b.setAttribute('data-theme', isL ? 'light' : 'dark');
+        icon.innerHTML = isL ? '<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>' : '<circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>';
+    }
+
+    function updatePreview(v) {
+        const box = document.getElementById('p-box');
+        if(v && v.startsWith('http')) { box.style.backgroundImage = `url('${v}')`; box.innerText = ''; }
+        else { box.style.backgroundImage = 'none'; box.innerText = 'AWAITING_MEDIA'; }
+    }
+
+    async function rollPinterest() {
+        try {
+            const r = await fetch(CONFIG.pinterest); const d = await r.json();
+            const res = d[Math.floor(Math.random() * d.length)];
+            document.getElementById('img').value = res; updatePreview(res);
+            showToast("Image Ditemukan!");
+        } catch(e) { showToast("Gagal mengambil data!"); }
+    }
+
+    async function rollTitle() {
+        try {
+            const r = await fetch(CONFIG.titles); const d = await r.json();
+            document.getElementById('title').value = d[Math.floor(Math.random() * d.length)];
+            showToast("Judul Ditemukan!");
+        } catch(e) {}
+    }
+
+    async function rollRedirect() {
+        try {
+            const r = await fetch(CONFIG.redirects); const d = await r.json();
+            let res = d[Math.floor(Math.random() * d.length)];
+            document.getElementById('dest').value = res.startsWith('http') ? res : 'https://' + res;
+            showToast("Target Disetel!");
+        } catch(e) {}
+    }
+
+async function generate() {
+        const t = document.getElementById('title').value, 
+              i = document.getElementById('img').value, 
+              d = document.getElementById('dest').value, 
+              q = parseInt(document.getElementById('qty').value);
+              
+        if(!t || !i || !d) return showToast("Lengkapi data!");
+        
+        try {
+            const r = await fetch(CONFIG.domains); 
+            const doms = await r.json();
+            const list = document.getElementById('list'); 
+            list.innerHTML = ''; 
+            results = [];
+
+            for(let n=0; n<q; n++) {
+                let dom = doms[Math.floor(Math.random() * doms.length)].replace(/\/$/, "");
+                if(!dom.startsWith('http')) dom = 'https://' + dom;
+                const b64 = btoa(unescape(encodeURIComponent(JSON.stringify({ t, i, d }))));
+                const fullUrl = `${dom}/${b64}`;
+                results.push(fullUrl);
+                const div = document.createElement('div'); 
+                div.className = 'item'; 
+                div.innerText = fullUrl; 
+                div.title = fullUrl;
+                list.appendChild(div);
+            }
             
-            const fullLink = `${base}/?t=${t}&i=${i}&d=${d}`;
-            document.getElementById('finalLink').innerText = fullLink;
-            document.getElementById('result').style.display = 'block';
+            document.getElementById('copyTopBtn').style.display = 'flex';
+            showToast(`Generated ${q} Links!`);
+
+            // --- TAMBAHKAN LOGIKA AUTO-COPY DI SINI ---
+            if (q === 1) {
+                navigator.clipboard.writeText(results[0]);
+                showToast("Link otomatis disalin!");
+            }
+            // -----------------------------------------
+
+        } catch(e) { 
+            showToast("Gagal generate!"); 
         }
-    </script>
+    }
+
+    function copyAll() {
+        if(results.length === 0) return;
+        navigator.clipboard.writeText(results.join('\n'));
+        showToast("Copied!");
+    }
+</script>
+<script src="ken.js"></script>
 </body>
 </html>
