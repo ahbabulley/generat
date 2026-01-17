@@ -4,184 +4,218 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ROWX BUILD</title>
- <link rel="icon" href="sarong.png">
+    <link rel="icon" href="sarong.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #f4f7fa; --card: #ffffff; --text: #1e293b; --text-sub: #64748b;
-            --border: #e2e8f0; --primary: #2563eb; --success: #10b981; --toast-bg: #1e293b;
+            --bg-overlay: rgba(255, 255, 255, 0.45); 
+            --card: rgba(255, 255, 255, 0.88); 
+            --text: #0f172a; --text-sub: #475569; --border: rgba(15, 23, 42, 0.1); 
+            --btn-bg: rgba(15, 23, 42, 0.05); --btn-text: #0f172a; --success: #10b981;
         }
         [data-theme="dark"] {
-            --bg: #0f172a; --card: #1e293b; --text: #f1f5f9; --text-sub: #94a3b8;
-            --border: #334155; --primary: #3b82f6; --success: #34d399; --toast-bg: #ffffff;
-        }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; transition: 0.3s; }
-        
-        .container { 
-            width: 850px; height: 500px; background: var(--card); border-radius: 16px; 
-            border: 1px solid var(--border); display: grid; grid-template-columns: 320px 1fr; 
-            overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        }
-        
-        .panel-left { 
-            padding: 24px; border-right: 1px solid var(--border); 
-            display: flex; flex-direction: column; 
-        }
-        
-        .panel-right { padding: 24px; background: rgba(0,0,0,0.01); display: flex; flex-direction: column; overflow: hidden; }
-        
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        h2 { font-size: 13px; font-weight: 800; margin: 0; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; }
-        
-        /* Preview Box - Diperbesar */
-        .preview-box { 
-            width: 100%; height: 130px; background: var(--bg); border-radius: 10px; 
-            border: 1px solid var(--border); display: flex; align-items: center; 
-            justify-content: center; font-size: 10px; font-weight: 600; color: var(--text-sub); 
-            background-size: cover; background-position: center; margin-bottom: 15px;
+            --bg-overlay: rgba(2, 6, 23, 0.75); 
+            --card: rgba(15, 23, 42, 0.85); 
+            --text: #f1f5f9; --text-sub: #94a3b8; --border: rgba(248, 250, 252, 0.1); 
+            --btn-bg: rgba(248, 250, 252, 0.08); --btn-text: #f8fafc; --success: #10b981;
         }
 
-        .input-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
-        .field-item { display: flex; flex-direction: column; gap: 4px; }
-        label { font-size: 10px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; }
-        
-        .field { position: relative; }
-        input { 
-            width: 100%; padding: 10px 35px 10px 12px; border: 1px solid var(--border); border-radius: 8px; 
-            background: var(--card); color: var(--text); font-size: 13px; outline: none; box-sizing: border-box; transition: 0.2s;
+        body { 
+            font-family: 'Inter', sans-serif; margin: 0; display: flex; 
+            justify-content: center; align-items: center; min-height: 100vh; 
+            overflow: hidden; background: #000;
         }
-        input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+
+        /* Background Layers */
+        .bg-frame {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover; background-position: center;
+            transition: opacity 1.8s ease-in-out; z-index: -2;
+        }
+        #bg1 { opacity: 1; } #bg2 { opacity: 0; }
+
+        .bg-overlay-layer {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--bg-overlay); 
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            z-index: -1; transition: background 0.5s;
+        }
+
+        .container { 
+            width: 420px; background: var(--card); border-radius: 32px; 
+            border: 1px solid var(--border); padding: 30px;
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        h2 { font-size: 11px; font-weight: 900; margin: 0; color: var(--text); text-transform: uppercase; letter-spacing: 3px; opacity: 0.8; }
+
+        /* Preview Area */
+        .preview-box { 
+            width: 100%; aspect-ratio: 4 / 3; background: rgba(0,0,0,0.05); border-radius: 22px; 
+            border: 1px solid var(--border); display: flex; align-items: center; 
+            justify-content: center; font-size: 12px; font-weight: 700; color: var(--text-sub); 
+            background-size: cover; background-position: center; margin-bottom: 24px;
+            transition: 0.5s; overflow: hidden; position: relative;
+        }
+
+        /* SHURIKEN SPINNER */
+        .shuriken-loader {
+            display: none;
+            width: 40px; height: 40px;
+            animation: spin-shuriken 0.8s infinite linear;
+        }
+        @keyframes spin-shuriken {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .input-group { display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px; }
+        .field-item { display: flex; flex-direction: column; gap: 6px; }
+        label { font-size: 9px; font-weight: 800; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; }
         
-        /* Hilangkan Scroller Qty */
+        input { 
+            width: 100%; padding: 12px 40px 12px 14px; border: 1px solid var(--border); border-radius: 14px; 
+            background: rgba(255,255,255,0.05); color: var(--text); font-size: 13px; outline: none; box-sizing: border-box;
+            transition: 0.3s;
+        }
+
+        /* Scroller Qty Hidden */
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
 
-        .icon-btn { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-sub); cursor: pointer; padding: 4px; display: flex; align-items: center; transition: 0.2s; border-radius: 6px; }
+        .field { position: relative; }
+        .icon-btn { 
+            position: absolute; right: 10px; top: 50%; transform: translateY(-50%); 
+            background: none; border: none; color: var(--text-sub); cursor: pointer; 
+            padding: 6px; display: flex; align-items: center; border-radius: 8px; 
+            transition: all 0.3s ease; 
+        }
+        .icon-btn:hover { color: var(--text); transform: translateY(-50%) scale(1.15); }
         
-        .row-group { display: flex; gap: 10px; }
+        .row-group { display: flex; gap: 14px; }
         .row-group > div:first-child { flex: 3; }
         .row-group > div:last-child { flex: 1.2; }
 
-        /* Tombol Generate - Hover Effect */
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .btn-gen { 
-            margin-top: 5px; width: 100%; padding: 14px; border: none; border-radius: 10px; font-weight: 700; 
-            font-size: 13px; cursor: pointer; display: flex; align-items: center; 
-            justify-content: center; gap: 8px; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); text-transform: uppercase;
-            background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+            padding: 15px; border: 1px solid var(--border); border-radius: 18px; font-weight: 700; 
+            font-size: 11px; cursor: pointer; display: flex; align-items: center; 
+            justify-content: center; gap: 8px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            text-transform: uppercase; color: var(--btn-text); background: var(--btn-bg);
         }
-        .btn-gen:hover { background: #1d4ed8; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3); }
+        .btn-gen:hover { transform: translateY(-3px); background: rgba(148, 163, 184, 0.2); }
+        .btn-gen.copied { background: var(--success) !important; color: white !important; border-color: var(--success) !important; transform: scale(1.05); }
 
-        /* Footer Text */
-        .footer-text { font-size: 9px; color: var(--text-sub); text-align: center; margin-top: 10px; opacity: 0.7; letter-spacing: 0.5px; }
-
-        .copy-container { height: 45px; margin-bottom: 10px; }
-        .btn-copy-top { 
-            background: var(--success); color: white; padding: 10px; border-radius: 8px; 
-            display: none; width: 100%; border: none; font-weight: 700; cursor: pointer; 
-            text-transform: uppercase; font-size: 11px; align-items: center; justify-content: center; 
-            gap: 6px; transition: 0.3s;
+        #result-area { 
+            margin-top: 0; overflow: hidden; max-height: 0; opacity: 0; 
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); 
         }
-        .btn-copy-top:hover { filter: brightness(1.05); transform: scale(1.01); }
+        #result-area.show { max-height: 100px; opacity: 1; margin-top: 24px; }
 
-        #list { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; scrollbar-width: none; }
-        #list::-webkit-scrollbar { display: none; }
-
-        .item { 
-            font-size: 11px; padding: 12px; background: var(--card); border: 1px solid var(--border); 
-            border-radius: 8px; color: var(--text-sub); font-family: 'Inter', monospace; 
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
-            border-left: 4px solid var(--primary); animation: slideIn 0.3s ease forwards;
+        .copy-all-btn { 
+            width: 100%; padding: 15px; background: var(--success); color: white; 
+            border: none; border-radius: 18px; font-size: 11px; font-weight: 800; 
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+            box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.4); text-transform: uppercase;
         }
 
         #toast {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
-            background: var(--toast-bg); color: var(--card); padding: 10px 24px; 
-            border-radius: 50px; font-size: 12px; font-weight: 600; transition: 0.4s;
-            z-index: 1000; box-shadow: 0 10px 25px rgba(0,0,0,0.2); opacity: 0;
+            background: var(--text); color: var(--card); padding: 14px 28px; 
+            border-radius: 20px; font-size: 12px; font-weight: 700; transition: 0.4s; z-index: 1000;
         }
         #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
-        .empty-state { margin: auto; text-align: center; font-size: 12px; color: var(--text-sub); opacity: 0.5; }
+        .footer-text { font-size: 9px; color: var(--text-sub); text-align: center; margin-top: 24px; font-weight: 700; letter-spacing: 2px; opacity: 0.6; }
     </style>
 </head>
 <body data-theme="dark">
 
+<div id="bg1" class="bg-frame"></div>
+<div id="bg2" class="bg-frame"></div>
+<div class="bg-overlay-layer"></div>
+
 <div class="container">
-    <div class="panel-left">
-        <div class="header">
-            <h2>FB COMMENT AUTOPLAY</h2>
-            <button class="icon-btn" style="position:static; transform:none;" onclick="toggleTheme()">
-                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" id="theme-icon">
-                    <circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
-                </svg>
-            </button>
-        </div>
-        
-        <div class="preview-box" id="p-box">AWAITING_MEDIA</div>
-        
-        <div class="input-group">
-            <div class="field-item">
-                <label>Image</label>
-                <div class="field">
-                    <input type="url" id="img" placeholder="https://..." oninput="updatePreview(this.value)">
-                    <button class="icon-btn" onclick="rollPinterest()">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                    </button>
-                </div>
-            </div>
-
-            <div class="field-item">
-                <label>Custom Title</label>
-                <div class="field">
-                    <input type="text" id="title" placeholder="Randomize title...">
-                    <button class="icon-btn" onclick="rollTitle()">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                    </button>
-                </div>
-            </div>
-
-            <div class="row-group">
-                <div class="field-item">
-                    <label>Destination</label>
-                    <div class="field">
-                        <input type="url" id="dest" placeholder="Target URL...">
-                        <button class="icon-btn" onclick="rollRedirect()">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-                        </button>
-                    </div>
-                </div>
-                <div class="field-item">
-                    <label>Qty</label>
-                    <input type="number" id="qty" value="1" min="1">
-                </div>
-            </div>
-        </div>
-
-        <button class="btn-gen" onclick="generate()">
-            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
-            Generate Links
+    <div class="header">
+        <h2>POST AUTOPLAY COMMENT</h2>
+        <button class="icon-btn" style="position:static;" onclick="toggleTheme()">
+            <svg id="theme-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+            </svg>
         </button>
-        <div class="footer-text">From arawhy rowx 2026 all right reserved</div>
+    </div>
+    
+    <div class="preview-box" id="p-box">
+        <svg class="shuriken-loader" id="p-loader" viewBox="0 0 100 100" fill="currentColor">
+            <path d="M50 10L60 40L90 50L60 60L50 90L40 60L10 50L40 40Z" />
+        </svg>
+        <span id="p-text">IMAGE PREVIEW</span>
+    </div>
+    
+    <div class="input-group">
+        <div class="field-item">
+            <label>Thumbnail Image</label>
+            <div class="field">
+                <input type="url" id="img" placeholder="Paste image URL..." oninput="updatePreview(this.value)">
+                <button class="icon-btn" onclick="rollPinterest()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="field-item">
+            <label>Title</label>
+            <div class="field">
+                <input type="text" id="title" placeholder="Catchy title...">
+                <button class="icon-btn" onclick="rollTitle()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="row-group">
+            <div class="field-item">
+                <label>Target</label>
+                <div class="field">
+                    <input type="url" id="dest" placeholder="URL...">
+                    <button class="icon-btn" onclick="rollRedirect()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="field-item">
+                <label>Qty</label>
+                <input type="number" id="qty" value="1" min="1">
+            </div>
+        </div>
     </div>
 
-    <div class="panel-right">
-        <div class="copy-container">
-            <button id="copyTopBtn" class="btn-copy-top" onclick="copyAll()">
-                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
-                Copy All Results
-            </button>
-        </div>
-        <div id="list">
-            <div class="empty-state">RESULT URL</div>
-        </div>
+    <div class="btn-grid">
+        <button class="btn-gen" id="btn-basic" onclick="generate('basic', this)">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+            BASIC
+        </button>
+        <button class="btn-gen" id="btn-meta" onclick="generate('meta', this)">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"></path></svg>
+            META
+        </button>
     </div>
+
+    <div id="result-area">
+        <button id="copyBtn" class="copy-all-btn" onclick="copyAll()">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
+            <span id="copyText">COPY RESULTS</span>
+        </button>
+    </div>
+
+    <div class="footer-text">FORM ARAWHY ROWX 2026</div>
 </div>
 
 <div id="toast"></div>
-
+<script src="ken.js"></script>
 <script>
-    /* ... logic tetap sama seperti sebelumnya ... */
     const CONFIG = {
         domains: "https://raw.githubusercontent.com/ahbabulley/generat/refs/heads/main/domains.json",
         titles: "https://raw.githubusercontent.com/ahbabulley/generat/refs/heads/main/titles.json",
@@ -189,7 +223,34 @@
         pinterest: "https://raw.githubusercontent.com/ahbabulley/generat/refs/heads/main/pumba.json" 
     };
 
-    let results = [];
+    let bgList = [];
+    let currentBgIdx = 1;
+    let lastResults = [];
+
+    async function initBg() {
+        try {
+            const r = await fetch(CONFIG.pinterest);
+            bgList = await r.json();
+            changeBg(); 
+            setInterval(changeBg, 7000); 
+        } catch(e) {}
+    }
+
+    function changeBg() {
+        if(bgList.length === 0) return;
+        const imgUrl = bgList[Math.floor(Math.random() * bgList.length)];
+        const img = new Image();
+        img.src = imgUrl;
+        img.onload = () => {
+            const activeBg = document.getElementById('bg' + currentBgIdx);
+            currentBgIdx = currentBgIdx === 1 ? 2 : 1;
+            const nextBg = document.getElementById('bg' + currentBgIdx);
+            nextBg.style.backgroundImage = `url('${imgUrl}')`;
+            nextBg.style.opacity = 1;
+            activeBg.style.opacity = 0;
+        };
+    }
+    initBg();
 
     function showToast(msg) {
         const t = document.getElementById('toast');
@@ -199,93 +260,84 @@
 
     function toggleTheme() {
         const b = document.body;
-        const icon = document.getElementById('theme-icon');
-        const isL = b.getAttribute('data-theme') === 'dark';
-        b.setAttribute('data-theme', isL ? 'light' : 'dark');
-        icon.innerHTML = isL ? '<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>' : '<circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>';
+        const isD = b.getAttribute('data-theme') === 'dark';
+        b.setAttribute('data-theme', isD ? 'light' : 'dark');
+        document.getElementById('theme-icon').innerHTML = isD ? '<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>' : '<circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>';
     }
 
     function updatePreview(v) {
         const box = document.getElementById('p-box');
-        if(v && v.startsWith('http')) { box.style.backgroundImage = `url('${v}')`; box.innerText = ''; }
-        else { box.style.backgroundImage = 'none'; box.innerText = 'AWAITING_MEDIA'; }
+        const loader = document.getElementById('p-loader');
+        const text = document.getElementById('p-text');
+
+        if(v && v.startsWith('http')) { 
+            text.style.display = 'none';
+            loader.style.display = 'block';
+            
+            const img = new Image();
+            img.src = v;
+            img.onload = () => {
+                box.style.backgroundImage = `url('${v}')`; 
+                loader.style.display = 'none';
+            };
+            img.onerror = () => {
+                box.style.backgroundImage = 'none';
+                loader.style.display = 'none';
+                text.innerText = 'INVALID_IMAGE';
+                text.style.display = 'block';
+            };
+        } else { 
+            box.style.backgroundImage = 'none'; 
+            loader.style.display = 'none';
+            text.innerText = 'AWAITING_MEDIA';
+            text.style.display = 'block';
+        }
     }
 
-    async function rollPinterest() {
-        try {
-            const r = await fetch(CONFIG.pinterest); const d = await r.json();
-            const res = d[Math.floor(Math.random() * d.length)];
-            document.getElementById('img').value = res; updatePreview(res);
-            showToast("Image Ditemukan!");
-        } catch(e) { showToast("Gagal mengambil data!"); }
-    }
+    async function rollPinterest() { try { const r = await fetch(CONFIG.pinterest); const d = await r.json(); const res = d[Math.floor(Math.random() * d.length)]; document.getElementById('img').value = res; updatePreview(res); showToast("✨ Thumbnail Selected"); } catch(e) {} }
+    async function rollTitle() { try { const r = await fetch(CONFIG.titles); const d = await r.json(); document.getElementById('title').value = d[Math.floor(Math.random() * d.length)]; showToast("📝 Title Selected"); } catch(e) {} }
+    async function rollRedirect() { try { const r = await fetch(CONFIG.redirects); const d = await r.json(); let res = d[Math.floor(Math.random() * d.length)]; document.getElementById('dest').value = res.startsWith('http') ? res : 'https://' + res; showToast("🔗 Target Set"); } catch(e) {} }
 
-    async function rollTitle() {
-        try {
-            const r = await fetch(CONFIG.titles); const d = await r.json();
-            document.getElementById('title').value = d[Math.floor(Math.random() * d.length)];
-            showToast("Judul Ditemukan!");
-        } catch(e) {}
-    }
-
-    async function rollRedirect() {
-        try {
-            const r = await fetch(CONFIG.redirects); const d = await r.json();
-            let res = d[Math.floor(Math.random() * d.length)];
-            document.getElementById('dest').value = res.startsWith('http') ? res : 'https://' + res;
-            showToast("Target Disetel!");
-        } catch(e) {}
-    }
-
-async function generate() {
+    async function generate(mode, btnElement) {
         const t = document.getElementById('title').value, 
               i = document.getElementById('img').value, 
               d = document.getElementById('dest').value, 
               q = parseInt(document.getElementById('qty').value);
-              
-        if(!t || !i || !d) return showToast("Lengkapi data!");
-        
+        if(!t || !i || !d) return showToast("⚠️ Data incomplete!");
         try {
             const r = await fetch(CONFIG.domains); 
             const doms = await r.json();
-            const list = document.getElementById('list'); 
-            list.innerHTML = ''; 
-            results = [];
-
+            lastResults = [];
             for(let n=0; n<q; n++) {
                 let dom = doms[Math.floor(Math.random() * doms.length)].replace(/\/$/, "");
                 if(!dom.startsWith('http')) dom = 'https://' + dom;
                 const b64 = btoa(unescape(encodeURIComponent(JSON.stringify({ t, i, d }))));
-                const fullUrl = `${dom}/${b64}`;
-                results.push(fullUrl);
-                const div = document.createElement('div'); 
-                div.className = 'item'; 
-                div.innerText = fullUrl; 
-                div.title = fullUrl;
-                list.appendChild(div);
+                let fullUrl = `${dom}/${b64}`;
+                if(mode === 'meta') fullUrl = `[url:${fullUrl}]`;
+                lastResults.push(fullUrl);
             }
-            
-            document.getElementById('copyTopBtn').style.display = 'flex';
-            showToast(`Generated ${q} Links!`);
-
-            // --- TAMBAHKAN LOGIKA AUTO-COPY DI SINI ---
             if (q === 1) {
-                navigator.clipboard.writeText(results[0]);
-                showToast("Link otomatis disalin!");
+                document.getElementById('result-area').classList.remove('show');
+                navigator.clipboard.writeText(lastResults[0]);
+                const originalContent = btnElement.innerHTML;
+                btnElement.classList.add('copied');
+                btnElement.innerHTML = `<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"></path></svg> COPIED!`;
+                setTimeout(() => { btnElement.classList.remove('copied'); btnElement.innerHTML = originalContent; }, 2000);
+                showToast("⚡ Auto Copied!");
+            } else {
+                document.getElementById('copyText').innerText = `COPY ${q} RESULTS`;
+                document.getElementById('result-area').classList.add('show');
+                showToast(`✅ Generated ${q} Links`);
             }
-            // -----------------------------------------
-
-        } catch(e) { 
-            showToast("Gagal generate!"); 
-        }
+        } catch(e) { showToast("❌ Error!"); }
     }
 
     function copyAll() {
-        if(results.length === 0) return;
-        navigator.clipboard.writeText(results.join('\n'));
-        showToast("Copied!");
+        if(lastResults.length === 0) return;
+        navigator.clipboard.writeText(lastResults.join('\n'));
+        showToast("📋 All Copied!");
+        setTimeout(() => { document.getElementById('result-area').classList.remove('show'); }, 500);
     }
 </script>
-<script src="ken.js"></script>
 </body>
 </html>
