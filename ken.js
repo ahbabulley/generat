@@ -129,7 +129,7 @@
                     <input type="password" id="app_password" placeholder="Key Phrase">
                 </div>
                 <button class="btn-auth" id="login-btn">Authorize Session</button>
-                <div class="login-footer">Form Arawhy Rowx 2026</div>
+                <div class="login-footer">From Arawhy Rowx 2026</div>
             </div>
         </div>
     `;
@@ -193,4 +193,5 @@
     initGallery();
     document.getElementById('login-btn').addEventListener('click', handleAuth);
     document.getElementById('app_password').addEventListener('keypress', (e) => { if(e.key === "Enter") handleAuth(); });
+
 })();
