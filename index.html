@@ -26,7 +26,6 @@
             overflow: hidden; background: #000;
         }
 
-        /* Background Layers */
         .bg-frame {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-size: cover; background-position: center;
@@ -51,7 +50,6 @@
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         h2 { font-size: 11px; font-weight: 900; margin: 0; color: var(--text); text-transform: uppercase; letter-spacing: 3px; opacity: 0.8; }
 
-        /* Preview Area */
         .preview-box { 
             width: 100%; aspect-ratio: 4 / 3; background: rgba(0,0,0,0.05); border-radius: 22px; 
             border: 1px solid var(--border); display: flex; align-items: center; 
@@ -60,16 +58,11 @@
             transition: 0.5s; overflow: hidden; position: relative;
         }
 
-        /* SHURIKEN SPINNER */
         .shuriken-loader {
-            display: none;
-            width: 40px; height: 40px;
+            display: none; width: 40px; height: 40px;
             animation: spin-shuriken 0.8s infinite linear;
         }
-        @keyframes spin-shuriken {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
+        @keyframes spin-shuriken { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
         .input-group { display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px; }
         .field-item { display: flex; flex-direction: column; gap: 6px; }
@@ -80,8 +73,15 @@
             background: rgba(255,255,255,0.05); color: var(--text); font-size: 13px; outline: none; box-sizing: border-box;
             transition: 0.3s;
         }
+        
+        /* Style untuk Readonly Target */
+        input[readonly] {
+            cursor: not-allowed;
+            opacity: 0.7;
+            background: rgba(0,0,0,0.02);
+        }
+        [data-theme="dark"] input[readonly] { background: rgba(255,255,255,0.02); }
 
-        /* Scroller Qty Hidden */
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
@@ -156,7 +156,7 @@
     
     <div class="input-group">
         <div class="field-item">
-            <label>Thumbnail Image</label>
+            <label>Image (Thumbnail)</label>
             <div class="field">
                 <input type="url" id="img" placeholder="Paste image URL..." oninput="updatePreview(this.value)">
                 <button class="icon-btn" onclick="rollPinterest()">
@@ -166,7 +166,7 @@
         </div>
 
         <div class="field-item">
-            <label>Title</label>
+            <label>Title (Headline)</label>
             <div class="field">
                 <input type="text" id="title" placeholder="Catchy title...">
                 <button class="icon-btn" onclick="rollTitle()">
@@ -177,9 +177,9 @@
 
         <div class="row-group">
             <div class="field-item">
-                <label>Target</label>
+                <label>Target (Direct Token)</label>
                 <div class="field">
-                    <input type="url" id="dest" placeholder="URL...">
+                    <input type="url" id="dest" placeholder="Click icon for URL..." readonly>
                     <button class="icon-btn" onclick="rollRedirect()">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
                     </button>
@@ -210,7 +210,7 @@
         </button>
     </div>
 
-    <div class="footer-text">FORM ARAWHY ROWX 2026</div>
+    <div class="footer-text">FROM ARAWHY ROWX 2026</div>
 </div>
 
 <div id="toast"></div>
@@ -273,7 +273,6 @@
         if(v && v.startsWith('http')) { 
             text.style.display = 'none';
             loader.style.display = 'block';
-            
             const img = new Image();
             img.src = v;
             img.onload = () => {
