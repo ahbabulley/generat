@@ -149,7 +149,7 @@
                     <div class="circle-pulse"></div>
                     <h1>Rowx Dashboard</h1>
                 </div>
-                <p>Professional dashboard for network cpa dating.</p>
+                <p>Generate smartlinks for dating cpa networks.</p>
                 <div class="input-box">
                     <input type="password" id="app_password" placeholder="Key Phrase">
                 </div>
@@ -230,4 +230,5 @@
     document.getElementById('login-btn').addEventListener('click', handleAuth);
     document.getElementById('app_password').addEventListener('keypress', (e) => { if(e.key === "Enter") handleAuth(); });
 })();
+
 
