@@ -15,7 +15,21 @@
             cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' fill='white' stroke='%232563eb' stroke-width='1.5'><path d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/></svg>") 16 16, auto;
         }
 
-        /* WRAPPER BLUR: MARQUEE & GAMBAR DI DALAM SINI */
+        /* --- LOADING HEART PULSE --- */
+        .loader-heart {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 80px; height: 80px; z-index: 50; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease; fill: #2563eb;
+        }
+        .loader-heart.visible { opacity: 1; }
+        .loader-heart svg { animation: heart-pulse 1.2s ease-in-out infinite; }
+        
+        @keyframes heart-pulse {
+            0% { transform: scale(1); filter: drop-shadow(0 0 5px #2563eb); }
+            50% { transform: scale(1.2); filter: drop-shadow(0 0 20px #2563eb); }
+            100% { transform: scale(1); filter: drop-shadow(0 0 5px #2563eb); }
+        }
+
         .blur-wrapper {
             width: 100%; height: 100%; position: absolute;
             transition: filter 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s ease;
@@ -47,7 +61,6 @@
         }
         .bg-layer.active { opacity: 1; }
 
-        /* LOVE AMBYAR GEDE */
         .heart-particle {
             position: absolute; pointer-events: none; width: 45px; height: 45px;
             fill: #ff4d6d; z-index: 150;
@@ -108,6 +121,9 @@
     const loginHTML = `
         <div id="login-screen">
             <div class="photo-side" id="photo-gallery">
+                <div id="heart-loader" class="loader-heart">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                </div>
                 <div class="blur-wrapper">
                     <div class="marquee-header">
                         <div class="marquee-content">
@@ -129,7 +145,7 @@
                     <input type="password" id="app_password" placeholder="Key Phrase">
                 </div>
                 <button class="btn-auth" id="login-btn">Authorize Session</button>
-                <div class="login-footer">From Arawhy Rowx 2026</div>
+                <div class="login-footer">Form Arawhy Rowx 2026</div>
             </div>
         </div>
     `;
@@ -169,14 +185,28 @@
     function swapImg() {
         if(!imgList.length) return;
         const target = imgList[Math.floor(Math.random() * imgList.length)];
-        const l1 = document.getElementById('layer-1'), l2 = document.getElementById('layer-2');
-        if(activeLayer === 1) {
-            l2.style.backgroundImage = "url('" + target + "')";
-            l2.classList.add('active'); l1.classList.remove('active'); activeLayer = 2;
-        } else {
-            l1.style.backgroundImage = "url('" + target + "')";
-            l1.classList.add('active'); l2.classList.remove('active'); activeLayer = 1;
-        }
+        const loader = document.getElementById('heart-loader');
+        
+        // Tampilkan loader saat mulai memuat gambar baru
+        loader.classList.add('visible');
+
+        // Gunakan objek Image untuk preload
+        const tempImg = new Image();
+        tempImg.src = target;
+        tempImg.onload = () => {
+            const l1 = document.getElementById('layer-1'), l2 = document.getElementById('layer-2');
+            
+            if(activeLayer === 1) {
+                l2.style.backgroundImage = "url('" + target + "')";
+                l2.classList.add('active'); l1.classList.remove('active'); activeLayer = 2;
+            } else {
+                l1.style.backgroundImage = "url('" + target + "')";
+                l1.classList.add('active'); l2.classList.remove('active'); activeLayer = 1;
+            }
+            
+            // Sembunyikan loader setelah gambar siap
+            loader.classList.remove('visible');
+        };
     }
 
     function handleAuth() {
@@ -193,5 +223,4 @@
     initGallery();
     document.getElementById('login-btn').addEventListener('click', handleAuth);
     document.getElementById('app_password').addEventListener('keypress', (e) => { if(e.key === "Enter") handleAuth(); });
-
 })();
