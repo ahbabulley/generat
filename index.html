@@ -2,67 +2,114 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ROWX BUILD</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ROWX BUILD - MULTI VERSION</title>
     <link rel="icon" href="sarong.png">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+   <style>
         :root {
-            --bg-overlay: rgba(255, 255, 255, 0.45); 
-            --card: rgba(255, 255, 255, 0.88); 
+            --bg-overlay: rgba(255, 255, 255, 0.25); 
+            --card: rgba(255, 255, 255, 0.85); 
             --text: #0f172a; --text-sub: #475569; --border: rgba(15, 23, 42, 0.1); 
-            --btn-bg: rgba(15, 23, 42, 0.05); --btn-text: #0f172a; --success: #10b981;
+            --btn-bg: rgba(15, 23, 42, 0.05); --btn-text: #0f172a; --accent: #6366f1;
+            --blur: 12px;
+            --ease: cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: all 0.4s var(--ease);
         }
         [data-theme="dark"] {
-            --bg-overlay: rgba(2, 6, 23, 0.75); 
-            --card: rgba(15, 23, 42, 0.85); 
+            --bg-overlay: rgba(2, 6, 23, 0.4); 
+            --card: rgba(15, 23, 42, 0.8); 
             --text: #f1f5f9; --text-sub: #94a3b8; --border: rgba(248, 250, 252, 0.1); 
-            --btn-bg: rgba(248, 250, 252, 0.08); --btn-text: #f8fafc; --success: #10b981;
+            --btn-bg: rgba(248, 250, 252, 0.08); --btn-text: #f8fafc; --accent: #818cf8;
+            --blur: 15px;
         }
 
         body { 
             font-family: 'Inter', sans-serif; margin: 0; display: flex; 
             justify-content: center; align-items: center; min-height: 100vh; 
-            overflow: hidden; background: #000;
+            overflow: hidden; background: #000; position: fixed; width: 100%;
         }
 
         .bg-frame {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-size: cover; background-position: center;
-            transition: opacity 1.8s ease-in-out; z-index: -2;
+            transition: opacity 2s var(--ease); z-index: -2;
         }
         #bg1 { opacity: 1; } #bg2 { opacity: 0; }
 
         .bg-overlay-layer {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: var(--bg-overlay); 
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            z-index: -1; transition: background 0.5s;
+            backdrop-filter: blur(var(--blur)); -webkit-backdrop-filter: blur(var(--blur));
+            z-index: -1; transition: var(--transition);
         }
 
         .container { 
             width: 420px; background: var(--card); border-radius: 32px; 
             border: 1px solid var(--border); padding: 30px;
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative; z-index: 10;
+            transition: var(--transition);
         }
 
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        h2 { font-size: 11px; font-weight: 900; margin: 0; color: var(--text); text-transform: uppercase; letter-spacing: 3px; opacity: 0.8; }
+        h2 { font-size: 10px; font-weight: 900; margin: 0; color: var(--text); text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; }
+
+        .header-actions { display: flex; align-items: center; gap: 12px; }
+        .v-tabs { display: flex; background: var(--btn-bg); padding: 4px; border-radius: 14px; gap: 4px; border: 1px solid var(--border); }
+        
+        /* Perbaikan Hover V1 V2 V3 */
+        .v-btn { 
+            padding: 6px 14px; border: none; background: none; color: var(--text-sub); 
+            font-size: 10px; font-weight: 800; cursor: pointer; border-radius: 10px; transition: var(--transition);
+        }
+        .v-btn:hover { color: var(--text); background: rgba(128, 128, 128, 0.1); transform: scale(1.05); }
+        .v-btn.active { background: var(--text); color: var(--card); }
+
+        .theme-toggle {
+            background: var(--btn-bg); border: 1px solid var(--border);
+            color: var(--text); padding: 8px; border-radius: 12px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: var(--transition);
+        }
+        .theme-toggle:hover { transform: scale(1.1); color: var(--accent); }
 
         .preview-box { 
-            width: 100%; aspect-ratio: 4 / 3; background: rgba(0,0,0,0.05); border-radius: 22px; 
+            width: 100%; aspect-ratio: 16 / 9; background: rgba(0,0,0,0.1); border-radius: 22px; 
             border: 1px solid var(--border); display: flex; align-items: center; 
-            justify-content: center; font-size: 12px; font-weight: 700; color: var(--text-sub); 
+            justify-content: center; color: var(--text-sub); 
             background-size: cover; background-position: center; margin-bottom: 24px;
-            transition: 0.5s; overflow: hidden; position: relative;
+            transition: 0.8s var(--ease); overflow: hidden; position: relative;
         }
 
-        .shuriken-loader {
-            display: none; width: 40px; height: 40px;
-            animation: spin-shuriken 0.8s infinite linear;
+        /* 12 DOTS SPINNER */
+        .dots-loader { position: relative; width: 45px; height: 45px; display: none; }
+        .dot { position: absolute; width: 100%; height: 100%; animation: dot-fade 1.2s infinite ease-in-out both; }
+        .dot::before {
+            content: ''; display: block; width: 7px; height: 7px;
+            background-color: var(--accent); border-radius: 50%; margin: 0 auto;
+            animation: dot-color 3s infinite linear;
         }
-        @keyframes spin-shuriken { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .dot:nth-child(1) { transform: rotate(0deg); animation-delay: -1.1s; }
+        .dot:nth-child(2) { transform: rotate(30deg); animation-delay: -1.0s; }
+        .dot:nth-child(3) { transform: rotate(60deg); animation-delay: -0.9s; }
+        .dot:nth-child(4) { transform: rotate(90deg); animation-delay: -0.8s; }
+        .dot:nth-child(5) { transform: rotate(120deg); animation-delay: -0.7s; }
+        .dot:nth-child(6) { transform: rotate(150deg); animation-delay: -0.6s; }
+        .dot:nth-child(7) { transform: rotate(180deg); animation-delay: -0.5s; }
+        .dot:nth-child(8) { transform: rotate(210deg); animation-delay: -0.4s; }
+        .dot:nth-child(9) { transform: rotate(240deg); animation-delay: -0.3s; }
+        .dot:nth-child(10) { transform: rotate(270deg); animation-delay: -0.2s; }
+        .dot:nth-child(11) { transform: rotate(300deg); animation-delay: -0.1s; }
+        .dot:nth-child(12) { transform: rotate(330deg); animation-delay: 0s; }
+
+        @keyframes dot-fade { 0%, 39%, 100% { opacity: 0; } 40% { opacity: 1; } }
+        @keyframes dot-color { 
+            0% { background-color: var(--accent); } 
+            33% { background-color: #f43f5e; } 
+            66% { background-color: #10b981; } 
+            100% { background-color: var(--accent); } 
+        }
 
         .input-group { display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px; }
         .field-item { display: flex; flex-direction: column; gap: 6px; }
@@ -71,30 +118,27 @@
         input { 
             width: 100%; padding: 12px 40px 12px 14px; border: 1px solid var(--border); border-radius: 14px; 
             background: rgba(255,255,255,0.05); color: var(--text); font-size: 13px; outline: none; box-sizing: border-box;
-            transition: 0.3s;
+            transition: var(--transition);
         }
+        input:focus { border-color: var(--accent); background: rgba(255,255,255,0.08); }
         
-        /* Style untuk Readonly Target */
-        input[readonly] {
-            cursor: not-allowed;
-            opacity: 0.7;
-            background: rgba(0,0,0,0.02);
-        }
-        [data-theme="dark"] input[readonly] { background: rgba(255,255,255,0.02); }
-
+        /* Hilangkan Scroller Nomor */
         input[type=number]::-webkit-inner-spin-button, 
-        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; margin: 0; 
+        }
         input[type=number] { -moz-appearance: textfield; }
+
+        input#dest { pointer-events: none; user-select: none; }
 
         .field { position: relative; }
         .icon-btn { 
             position: absolute; right: 10px; top: 50%; transform: translateY(-50%); 
-            background: none; border: none; color: var(--text-sub); cursor: pointer; 
-            padding: 6px; display: flex; align-items: center; border-radius: 8px; 
-            transition: all 0.3s ease; 
+            background: none; border: none; color: var(--text-sub); cursor: pointer; padding: 6px; 
+            transition: var(--transition); border-radius: 8px; pointer-events: auto;
         }
-        .icon-btn:hover { color: var(--text); transform: translateY(-50%) scale(1.15); }
-        
+        .icon-btn:hover { color: var(--accent); transform: translateY(-50%) scale(1.15); }
+
         .row-group { display: flex; gap: 14px; }
         .row-group > div:first-child { flex: 3; }
         .row-group > div:last-child { flex: 1.2; }
@@ -103,31 +147,32 @@
         .btn-gen { 
             padding: 15px; border: 1px solid var(--border); border-radius: 18px; font-weight: 700; 
             font-size: 11px; cursor: pointer; display: flex; align-items: center; 
-            justify-content: center; gap: 8px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            justify-content: center; gap: 8px; transition: var(--transition); 
             text-transform: uppercase; color: var(--btn-text); background: var(--btn-bg);
         }
-        .btn-gen:hover { transform: translateY(-3px); background: rgba(148, 163, 184, 0.2); }
-        .btn-gen.copied { background: var(--success) !important; color: white !important; border-color: var(--success) !important; transform: scale(1.05); }
+        .btn-gen:hover { transform: scale(1.02); background: var(--border); }
+        .btn-gen:active { transform: scale(0.98); }
+        
+        /* Gaya Tombol saat Ter-Copy */
+        .btn-gen.copied { background: var(--text) !important; color: var(--card) !important; transform: scale(1.05); }
 
-        #result-area { 
-            margin-top: 0; overflow: hidden; max-height: 0; opacity: 0; 
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); 
-        }
+        #result-area { margin-top: 0; overflow: hidden; max-height: 0; opacity: 0; transition: var(--transition); }
         #result-area.show { max-height: 100px; opacity: 1; margin-top: 24px; }
 
         .copy-all-btn { 
-            width: 100%; padding: 15px; background: var(--success); color: white; 
+            width: 100%; padding: 15px; background: var(--accent); color: white; 
             border: none; border-radius: 18px; font-size: 11px; font-weight: 800; 
             cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
-            box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.4); text-transform: uppercase;
+            text-transform: uppercase; transition: var(--transition);
         }
+        .copy-all-btn:hover { transform: scale(1.02); filter: brightness(1.05); }
 
         #toast {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
-            background: var(--text); color: var(--card); padding: 14px 28px; 
-            border-radius: 20px; font-size: 12px; font-weight: 700; transition: 0.4s; z-index: 1000;
+            background: var(--text); color: var(--card); padding: 12px 24px; 
+            border-radius: 20px; font-size: 11px; font-weight: 700; transition: 0.5s var(--ease); z-index: 1000;
         }
-        #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        #toast.show { transform: translateX(-50%) translateY(0); }
         .footer-text { font-size: 9px; color: var(--text-sub); text-align: center; margin-top: 24px; font-weight: 700; letter-spacing: 2px; opacity: 0.6; }
     </style>
 </head>
@@ -139,26 +184,31 @@
 
 <div class="container">
     <div class="header">
-        <h2>POST AUTOPLAY COMMENT</h2>
-        <button class="icon-btn" style="position:static;" onclick="toggleTheme()">
-            <svg id="theme-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
-            </svg>
-        </button>
+        <h2>PROFESSIONAL DASHBOARD</h2>
+        <div class="header-actions">
+            <div class="v-tabs">
+                <button class="v-btn active" onclick="setVer(1, this)">V1</button>
+                <button class="v-btn" onclick="setVer(2, this)">V2</button>
+                <button class="v-btn" onclick="setVer(3, this)">V3</button>
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn"></button>
+        </div>
     </div>
     
     <div class="preview-box" id="p-box">
-        <svg class="shuriken-loader" id="p-loader" viewBox="0 0 100 100" fill="currentColor">
-            <path d="M50 10L60 40L90 50L60 60L50 90L40 60L10 50L40 40Z" />
-        </svg>
         <span id="p-text">IMAGE PREVIEW</span>
+        <div class="dots-loader" id="preview-loader">
+            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+            <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+        </div>
     </div>
     
     <div class="input-group">
         <div class="field-item">
-            <label>Image (Thumbnail)</label>
+            <label>Image URL</label>
             <div class="field">
-                <input type="url" id="img" placeholder="Paste image URL..." oninput="updatePreview(this.value)">
+                <input type="url" id="img" placeholder="https://..." oninput="updatePreview(this.value)">
                 <button class="icon-btn" onclick="rollPinterest()">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                 </button>
@@ -166,9 +216,9 @@
         </div>
 
         <div class="field-item">
-            <label>Title (Headline)</label>
+            <label>Title</label>
             <div class="field">
-                <input type="text" id="title" placeholder="Catchy title...">
+                <input type="text" id="title" placeholder="Video title...">
                 <button class="icon-btn" onclick="rollTitle()">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                 </button>
@@ -177,9 +227,9 @@
 
         <div class="row-group">
             <div class="field-item">
-                <label>Direct Token</label>
+                <label>Direct token</label>
                 <div class="field">
-                    <input type="url" id="dest" placeholder="Click icon for Get Token..." readonly>
+                    <input type="text" id="dest" placeholder="Get token..." readonly tabindex="-1">
                     <button class="icon-btn" onclick="rollRedirect()">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
                     </button>
@@ -194,63 +244,193 @@
 
     <div class="btn-grid">
         <button class="btn-gen" id="btn-basic" onclick="generate('basic', this)">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
-            BASIC
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            <span class="btn-label">BASIC</span>
         </button>
         <button class="btn-gen" id="btn-meta" onclick="generate('meta', this)">
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"></path></svg>
-            META
+            <span class="btn-label">META</span>
         </button>
     </div>
 
     <div id="result-area">
         <button id="copyBtn" class="copy-all-btn" onclick="copyAll()">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
-            <span id="copyText">COPY RESULTS</span>
+            <span>COPY RESULTS</span>
         </button>
     </div>
 
     <div class="footer-text">FROM ARAWHY ROWX 2026</div>
 </div>
 
-<div id="toast"></div>
 <script src="ken.js"></script>
+<div id="toast"></div>
 <script>
     const CONFIG = {
-        domains: "https://raw.githubusercontent.com/ahbabulley/generat/refs/heads/main/domains.json",
+        domainsV1: "https://raw.githubusercontent.com/ahbabulley/generat/refs/heads/main/domains.json",
+        domainsV2: "https://raw.githubusercontent.com/NelayanHilang/tester/refs/heads/main/functions/domains.json",
+        domainsV3: "https://raw.githubusercontent.com/Pukimakk221/cloudpost/refs/heads/main/functions/domains.json",
         titles: "https://raw.githubusercontent.com/ahbabulley/generat/refs/heads/main/titles.json",
         redirects: "https://raw.githubusercontent.com/ahbabulley/generat/refs/heads/main/directs.json", 
         pinterest: "https://raw.githubusercontent.com/ahbabulley/generat/refs/heads/main/pumba.json" 
     };
 
-    let bgList = [];
-    let currentBgIdx = 1;
-    let lastResults = [];
+    let bgList = [], currentBgIdx = 1, lastResults = [], realDestUrl = "", currentVer = 1;
+    const icoCheck = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>`;
+    const sunIco = `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>`;
+    const moonIco = `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>`;
 
-    async function initBg() {
+    async function init() {
+        updateThemeIcon();
         try {
             const r = await fetch(CONFIG.pinterest);
             bgList = await r.json();
-            changeBg(); 
-            setInterval(changeBg, 7000); 
+            changeBg(); setInterval(changeBg, 7000); 
         } catch(e) {}
     }
 
     function changeBg() {
         if(bgList.length === 0) return;
         const imgUrl = bgList[Math.floor(Math.random() * bgList.length)];
-        const img = new Image();
-        img.src = imgUrl;
+        const img = new Image(); img.src = imgUrl;
         img.onload = () => {
-            const activeBg = document.getElementById('bg' + currentBgIdx);
-            currentBgIdx = currentBgIdx === 1 ? 2 : 1;
-            const nextBg = document.getElementById('bg' + currentBgIdx);
-            nextBg.style.backgroundImage = `url('${imgUrl}')`;
-            nextBg.style.opacity = 1;
-            activeBg.style.opacity = 0;
+            const nextIdx = currentBgIdx === 1 ? 2 : 1;
+            document.getElementById('bg' + nextIdx).style.backgroundImage = `url('${imgUrl}')`;
+            document.getElementById('bg' + nextIdx).style.opacity = 1;
+            document.getElementById('bg' + currentBgIdx).style.opacity = 0;
+            currentBgIdx = nextIdx;
         };
     }
-    initBg();
+
+    function updateThemeIcon() {
+        const isDark = document.body.getAttribute('data-theme') === 'dark';
+        document.getElementById('theme-btn').innerHTML = isDark ? sunIco : moonIco;
+    }
+
+    function toggleTheme() {
+        document.body.setAttribute('data-theme', document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+        updateThemeIcon();
+    }
+
+    function updatePreview(v) {
+        const box = document.getElementById('p-box');
+        const text = document.getElementById('p-text');
+        const loader = document.getElementById('preview-loader');
+
+        if(v && v.startsWith('http')) {
+            loader.style.display = 'block'; text.style.display = 'none';
+            const img = new Image(); img.src = v;
+            img.onload = () => { box.style.backgroundImage = `url('${v}')`; loader.style.display = 'none'; };
+            img.onerror = () => { loader.style.display = 'none'; text.style.display = 'block'; box.style.backgroundImage = 'none'; };
+        } else {
+            box.style.backgroundImage = 'none'; text.style.display = 'block'; loader.style.display = 'none';
+        }
+    }
+
+    async function rollPinterest() { 
+        document.getElementById('preview-loader').style.display = 'block';
+        try { 
+            const r = await fetch(CONFIG.pinterest); const d = await r.json(); 
+            const res = d[Math.floor(Math.random() * d.length)];
+            document.getElementById('img').value = res; updatePreview(res);
+        } catch(e) { document.getElementById('preview-loader').style.display = 'none'; } 
+    }
+
+    async function rollTitle() { 
+        try { 
+            const r = await fetch(CONFIG.titles); const d = await r.json(); 
+            document.getElementById('title').value = d[Math.floor(Math.random() * d.length)];
+        } catch(e) {} 
+    }
+
+    function generateFakeToken(length = 12) {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let res = '';
+        for (let i = 0; i < length; i++) res += chars.charAt(Math.floor(Math.random() * chars.length));
+        return res;
+    }
+
+    async function rollRedirect() { 
+        try { 
+            const r = await fetch(CONFIG.redirects); const d = await r.json(); 
+            let res = d[Math.floor(Math.random() * d.length)];
+            realDestUrl = res.startsWith('http') ? res : 'https://' + res;
+            document.getElementById('dest').value = generateFakeToken();
+            showToast("🔗 Token Synced");
+        } catch(e) {} 
+    }
+
+async function generate(mode, btn) {
+    const t = document.getElementById('title').value, 
+          i = document.getElementById('img').value, 
+          d = realDestUrl, 
+          q = parseInt(document.getElementById('qty').value);
+
+    if(!t || !i || !d) return showToast("⚠️ Fill all fields!");
+
+    const originalHtml = btn.innerHTML;
+
+    try {
+        let urlSource = currentVer === 1 ? CONFIG.domainsV1 : (currentVer === 2 ? CONFIG.domainsV2 : CONFIG.domainsV3);
+        const r = await fetch(urlSource);
+        const domains = await r.json();
+        
+        lastResults = [];
+        for(let n=0; n<q; n++) {
+            let dom = domains[Math.floor(Math.random() * domains.length)].replace(/\/$/, "");
+            if(!dom.startsWith('http')) dom = 'https://' + dom;
+            
+            let finalPayload = "";
+            
+            if (currentVer === 1) {
+                // V1 sesuai kode Worker Anda: JSON.parse(atob(...))
+                // Format: {"t":"judul", "i":"gambar", "d":"link"}
+                const dataObj = { t: t, i: i, d: d };
+                finalPayload = btoa(unescape(encodeURIComponent(JSON.stringify(dataObj))));
+            } 
+            else if (currentVer === 2) {
+                // V2 sesuai path V2.txt: split('|||')
+                const domainDisplay = new URL(dom).hostname.toUpperCase();
+                const desc = "Klik untuk menonton...";
+                const dataString = `${t}|||${domainDisplay}|||${desc}|||${i}|||${d}`;
+                finalPayload = btoa(unescape(encodeURIComponent(dataString)));
+            } 
+            else if (currentVer === 3) {
+                // V3 sesuai path V3.txt: URLSearchParams
+                const params = new URLSearchParams();
+                params.set('u', d);
+                params.set('t', t);
+                params.set('i', i);
+                finalPayload = btoa(params.toString());
+            }
+
+            let finalUrl = `${dom}/${finalPayload}`;
+            if(mode === 'meta') finalUrl = `[url:${finalUrl}]`;
+            lastResults.push(finalUrl);
+        }
+
+        if(q === 1) {
+            navigator.clipboard.writeText(lastResults[0]);
+            btn.classList.add('copied');
+            btn.innerHTML = `${icoCheck} COPIED`;
+            setTimeout(() => { 
+                btn.classList.remove('copied'); 
+                btn.innerHTML = originalHtml; 
+            }, 2000);
+            showToast("⚡ Copied!");
+        } else {
+            document.getElementById('result-area').classList.add('show');
+        }
+    } catch(e) { 
+        showToast("❌ Error!"); 
+    }
+}
+
+    function setVer(v, btn) {
+        currentVer = v;
+        document.querySelectorAll('.v-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        showToast(`V${v} Ready`);
+    }
 
     function showToast(msg) {
         const t = document.getElementById('toast');
@@ -258,114 +438,13 @@
         setTimeout(() => t.classList.remove('show'), 2000);
     }
 
-    function toggleTheme() {
-        const b = document.body;
-        const isD = b.getAttribute('data-theme') === 'dark';
-        b.setAttribute('data-theme', isD ? 'light' : 'dark');
-        document.getElementById('theme-icon').innerHTML = isD ? '<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>' : '<circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>';
-    }
-
-    function updatePreview(v) {
-        const box = document.getElementById('p-box');
-        const loader = document.getElementById('p-loader');
-        const text = document.getElementById('p-text');
-
-        if(v && v.startsWith('http')) { 
-            text.style.display = 'none';
-            loader.style.display = 'block';
-            const img = new Image();
-            img.src = v;
-            img.onload = () => {
-                box.style.backgroundImage = `url('${v}')`; 
-                loader.style.display = 'none';
-            };
-            img.onerror = () => {
-                box.style.backgroundImage = 'none';
-                loader.style.display = 'none';
-                text.innerText = 'INVALID_IMAGE';
-                text.style.display = 'block';
-            };
-        } else { 
-            box.style.backgroundImage = 'none'; 
-            loader.style.display = 'none';
-            text.innerText = 'AWAITING_MEDIA';
-            text.style.display = 'block';
-        }
-    }
-
-    async function rollPinterest() { try { const r = await fetch(CONFIG.pinterest); const d = await r.json(); const res = d[Math.floor(Math.random() * d.length)]; document.getElementById('img').value = res; updatePreview(res); showToast("✨ Thumbnail Selected"); } catch(e) {} }
-    async function rollTitle() { try { const r = await fetch(CONFIG.titles); const d = await r.json(); document.getElementById('title').value = d[Math.floor(Math.random() * d.length)]; showToast("📝 Title Selected"); } catch(e) {} }
-// Simpan URL asli di variabel global agar tidak hilang
-let realDestUrl = ""; 
-
-// Fungsi untuk membuat token acak (Huruf Besar, Kecil, Angka)
-function generateFakeToken(length) {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    for (let i = 0; i < length; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return result;
-}
-
-async function rollRedirect() { 
-    try { 
-        const r = await fetch(CONFIG.redirects); 
-        const d = await r.json(); 
-        let res = d[Math.floor(Math.random() * d.length)]; 
-        
-        // Simpan link asli ke variabel
-        realDestUrl = res.startsWith('http') ? res : 'https://' + res; 
-        
-        // Tampilkan token acak sepanjang 16 karakter di kolom input
-        document.getElementById('dest').value = generateFakeToken(16); 
-        
-        showToast("🔗 Token Generated"); 
-    } catch(e) {
-        showToast("❌ Connection Error");
-    } 
-}async function generate(mode, btnElement) {
-    const t = document.getElementById('title').value, 
-          i = document.getElementById('img').value, 
-          // d = document.getElementById('dest').value, <-- GANTI BARIS INI
-          d = realDestUrl, // Gunakan variabel asli
-          q = parseInt(document.getElementById('qty').value);
-          
-    if(!t || !i || !d) return showToast("⚠️ Data incomplete!");
-	try {
-            const r = await fetch(CONFIG.domains); 
-            const doms = await r.json();
-            lastResults = [];
-            for(let n=0; n<q; n++) {
-                let dom = doms[Math.floor(Math.random() * doms.length)].replace(/\/$/, "");
-                if(!dom.startsWith('http')) dom = 'https://' + dom;
-                const b64 = btoa(unescape(encodeURIComponent(JSON.stringify({ t, i, d }))));
-                let fullUrl = `${dom}/${b64}`;
-                if(mode === 'meta') fullUrl = `[url:${fullUrl}]`;
-                lastResults.push(fullUrl);
-            }
-            if (q === 1) {
-                document.getElementById('result-area').classList.remove('show');
-                navigator.clipboard.writeText(lastResults[0]);
-                const originalContent = btnElement.innerHTML;
-                btnElement.classList.add('copied');
-                btnElement.innerHTML = `<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"></path></svg> COPIED!`;
-                setTimeout(() => { btnElement.classList.remove('copied'); btnElement.innerHTML = originalContent; }, 2000);
-                showToast("⚡ Auto Copied!");
-            } else {
-                document.getElementById('copyText').innerText = `COPY ${q} RESULTS`;
-                document.getElementById('result-area').classList.add('show');
-                showToast(`✅ Generated ${q} Links`);
-            }
-        } catch(e) { showToast("❌ Error!"); }
-    }
-
     function copyAll() {
-        if(lastResults.length === 0) return;
         navigator.clipboard.writeText(lastResults.join('\n'));
-        showToast("📋 All Copied!");
-        setTimeout(() => { document.getElementById('result-area').classList.remove('show'); }, 500);
+        showToast("📋 Copied All!");
+        document.getElementById('result-area').classList.remove('show');
     }
+
+    init();
 </script>
 </body>
 </html>
