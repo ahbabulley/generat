@@ -177,9 +177,9 @@
 
         <div class="row-group">
             <div class="field-item">
-                <label>Target (Direct Token)</label>
+                <label>Direct Token</label>
                 <div class="field">
-                    <input type="url" id="dest" placeholder="Click icon for URL..." readonly>
+                    <input type="url" id="dest" placeholder="Click icon for Get Token..." readonly>
                     <button class="icon-btn" onclick="rollRedirect()">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
                     </button>
@@ -295,15 +295,44 @@
 
     async function rollPinterest() { try { const r = await fetch(CONFIG.pinterest); const d = await r.json(); const res = d[Math.floor(Math.random() * d.length)]; document.getElementById('img').value = res; updatePreview(res); showToast("✨ Thumbnail Selected"); } catch(e) {} }
     async function rollTitle() { try { const r = await fetch(CONFIG.titles); const d = await r.json(); document.getElementById('title').value = d[Math.floor(Math.random() * d.length)]; showToast("📝 Title Selected"); } catch(e) {} }
-    async function rollRedirect() { try { const r = await fetch(CONFIG.redirects); const d = await r.json(); let res = d[Math.floor(Math.random() * d.length)]; document.getElementById('dest').value = res.startsWith('http') ? res : 'https://' + res; showToast("🔗 Target Set"); } catch(e) {} }
+// Simpan URL asli di variabel global agar tidak hilang
+let realDestUrl = ""; 
 
-    async function generate(mode, btnElement) {
-        const t = document.getElementById('title').value, 
-              i = document.getElementById('img').value, 
-              d = document.getElementById('dest').value, 
-              q = parseInt(document.getElementById('qty').value);
-        if(!t || !i || !d) return showToast("⚠️ Data incomplete!");
-        try {
+// Fungsi untuk membuat token acak (Huruf Besar, Kecil, Angka)
+function generateFakeToken(length) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+}
+
+async function rollRedirect() { 
+    try { 
+        const r = await fetch(CONFIG.redirects); 
+        const d = await r.json(); 
+        let res = d[Math.floor(Math.random() * d.length)]; 
+        
+        // Simpan link asli ke variabel
+        realDestUrl = res.startsWith('http') ? res : 'https://' + res; 
+        
+        // Tampilkan token acak sepanjang 16 karakter di kolom input
+        document.getElementById('dest').value = generateFakeToken(16); 
+        
+        showToast("🔗 Token Generated"); 
+    } catch(e) {
+        showToast("❌ Connection Error");
+    } 
+}async function generate(mode, btnElement) {
+    const t = document.getElementById('title').value, 
+          i = document.getElementById('img').value, 
+          // d = document.getElementById('dest').value, <-- GANTI BARIS INI
+          d = realDestUrl, // Gunakan variabel asli
+          q = parseInt(document.getElementById('qty').value);
+          
+    if(!t || !i || !d) return showToast("⚠️ Data incomplete!");
+	try {
             const r = await fetch(CONFIG.domains); 
             const doms = await r.json();
             lastResults = [];
