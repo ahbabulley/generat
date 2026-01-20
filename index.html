@@ -120,7 +120,6 @@
         }
         input:focus { border-color: var(--accent); background: rgba(255,255,255,0.08); }
         
-        /* Padding khusus untuk Input Image karena ada 2 ikon */
         input#img { padding-right: 75px; }
 
         input[type=number]::-webkit-inner-spin-button, 
@@ -130,7 +129,6 @@
 
         .field { position: relative; }
 
-        /* Container untuk menampung lebih dari 1 ikon di dalam input */
         .field-actions {
             position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
             display: flex; gap: 2px; align-items: center;
@@ -140,7 +138,6 @@
             background: none; border: none; color: var(--text-sub); cursor: pointer; padding: 6px; 
             transition: var(--transition); border-radius: 8px; display: flex; align-items: center;
         }
-        /* Ikon tunggal (selain image) tetap pakai gaya lama agar tidak rusak */
         .field > .icon-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); }
         .icon-btn:hover { color: var(--accent); transform: scale(1.15); }
         .field > .icon-btn:hover { transform: translateY(-50%) scale(1.15); }
@@ -216,6 +213,7 @@
                 <button class="v-btn active" onclick="setVer(1, this)">V1</button>
                 <button class="v-btn" onclick="setVer(2, this)">V2</button>
                 <button class="v-btn" onclick="setVer(3, this)">V3</button>
+                <button class="v-btn" onclick="setVer(4, this)">V4</button>
             </div>
             <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn"></button>
         </div>
@@ -315,6 +313,7 @@
         domainsV1: "https://raw.githubusercontent.com/ahbabulley/generat/refs/heads/main/domains.json",
         domainsV2: "https://raw.githubusercontent.com/NelayanHilang/tester/refs/heads/main/functions/domains.json",
         domainsV3: "https://raw.githubusercontent.com/Pukimakk221/cloudpost/refs/heads/main/functions/domains.json",
+        domainsV4: "https://raw.githubusercontent.com/ahbabulley/gesok/refs/heads/main/domplang.json",
         titles: "https://raw.githubusercontent.com/ahbabulley/generat/refs/heads/main/titles.json",
         redirects: "https://raw.githubusercontent.com/ahbabulley/generat/refs/heads/main/directs.json", 
         pinterest: "https://raw.githubusercontent.com/ahbabulley/generat/refs/heads/main/pumba.json",
@@ -446,7 +445,7 @@
         } catch(e) {} 
     }
 
-    async function generate(mode, btn) {
+async function generate(mode, btn) {
         const t = document.getElementById('title').value;
         const i = document.getElementById('img').value;
         const d = realDestUrl; 
@@ -459,7 +458,12 @@
         btn.innerHTML = `<svg class="btn-spinner" viewBox="0 0 50 50"><circle cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle></svg>`;
 
         try {
-            let urlSource = currentVer === 1 ? CONFIG.domainsV1 : (currentVer === 2 ? CONFIG.domainsV2 : CONFIG.domainsV3);
+            // Memilih sumber domain berdasarkan versi
+            let urlSource = CONFIG.domainsV1;
+            if (currentVer === 2) urlSource = CONFIG.domainsV2;
+            else if (currentVer === 3) urlSource = CONFIG.domainsV3;
+            else if (currentVer === 4) urlSource = CONFIG.domainsV4;
+            
             const r = await fetch(urlSource);
             const domains = await r.json();
             lastResults = [];
@@ -468,19 +472,30 @@
                 let dom = domains[Math.floor(Math.random() * domains.length)].replace(/\/$/, "");
                 if(!dom.startsWith('http')) dom = 'https://' + dom;
                 
-                let finalPayload = "";
-                if (currentVer === 1) {
-                    const dataObj = { t: t, i: i, d: d };
-                    finalPayload = btoa(unescape(encodeURIComponent(JSON.stringify(dataObj))));
-                } else if (currentVer === 2) {
-                    const domainDisplay = new URL(dom).hostname.toUpperCase();
-                    const dataString = `${t}|||${domainDisplay}|||Klik untuk menonton...|||${i}|||${d}`;
-                    finalPayload = btoa(unescape(encodeURIComponent(dataString)));
-                } else if (currentVer === 3) {
-                    const params = new URLSearchParams();
-                    params.set('u', d); params.set('t', t); params.set('i', i);
-                    finalPayload = btoa(params.toString());
-                }
+let finalPayload = "";
+
+if (currentVer === 1) {
+    // Format V1: JSON {t, i, d}
+    const dataObj = { t: t, i: i, d: d };
+    finalPayload = btoa(unescape(encodeURIComponent(JSON.stringify(dataObj))));
+} 
+else if (currentVer === 2) {
+    // Format V2: String dipisah ||| (INI YANG MEMBUAT V2 BERFUNGSI LAGI)
+    const domainDisplay = new URL(dom).hostname.toUpperCase();
+    const dataString = `${t}|||${domainDisplay}|||Klik untuk menonton...|||${i}|||${d}`;
+    finalPayload = btoa(unescape(encodeURIComponent(dataString)));
+} 
+else if (currentVer === 3) {
+    // Format V3: URLSearchParams
+    const params = new URLSearchParams();
+    params.set('u', d); params.set('t', t); params.set('i', i);
+    finalPayload = btoa(params.toString());
+}
+else if (currentVer === 4) {
+    // Format V4: JSON {t, i, u} -> Sesuai backend [[path]].js yang mencari data.u
+    const dataObj = { t: t, i: i, u: d }; 
+    finalPayload = btoa(unescape(encodeURIComponent(JSON.stringify(dataObj))));
+}
 
                 let finalUrl = `${dom}/${finalPayload}`;
                 if (mode === 'meta') finalUrl = `[url:${finalUrl}]`;
