@@ -143,7 +143,14 @@
         .row-group > div:first-child { flex: 3; }
         .row-group > div:last-child { flex: 1.2; }
 
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.btn-grid { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; /* Tetap 2 kolom, FB Share akan otomatis di bawah lebar penuh */
+    gap: 12px; 
+}
+#btn-fb {
+    grid-column: span 2; /* Membuat tombol FB lebar penuh di baris baru */
+}
         .btn-gen { 
             padding: 15px; border: 1px solid var(--border); border-radius: 18px; font-weight: 700; 
             font-size: 11px; cursor: pointer; display: flex; align-items: center; 
@@ -174,7 +181,51 @@
         }
         #toast.show { transform: translateX(-50%) translateY(0); }
         .footer-text { font-size: 9px; color: var(--text-sub); text-align: center; margin-top: 24px; font-weight: 700; letter-spacing: 2px; opacity: 0.6; }
-    </style>
+ .social-row {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+    }
+    .social-row .btn-gen {
+        flex: 1; /* Membagi rata lebar tombol agar seimbang */
+        padding: 12px 5px;
+        font-size: 10px;
+        display: flex;
+        flex-direction: column; /* Ikon di atas, teks di bawah */
+        gap: 4px;
+    }
+/* Spinner Premium & Dinamis */
+.btn-spinner {
+    width: 18px;
+    height: 18px;
+    animation: rotate-spinner 1s linear infinite;
+    display: inline-block;
+}
+
+.btn-spinner circle {
+    stroke: currentColor; /* Menyesuaikan warna teks (hitam di light mode, putih di dark mode) */
+    stroke-linecap: round;
+    animation: dash-spinner 1.5s ease-in-out infinite;
+    opacity: 0.8;
+}
+
+@keyframes rotate-spinner {
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes dash-spinner {
+    0% { stroke-dasharray: 1, 150; stroke-dashoffset: 0; }
+    50% { stroke-dasharray: 90, 150; stroke-dashoffset: -35; }
+    100% { stroke-dasharray: 90, 150; stroke-dashoffset: -124; }
+}
+
+/* Transisi konten tombol agar tidak kaget */
+.btn-gen {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+ </style>
 </head>
 <body data-theme="dark">
 
@@ -242,16 +293,34 @@
         </div>
     </div>
 
-    <div class="btn-grid">
-        <button class="btn-gen" id="btn-basic" onclick="generate('basic', this)">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-            <span class="btn-label">BASIC</span>
-        </button>
-        <button class="btn-gen" id="btn-meta" onclick="generate('meta', this)">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"></path></svg>
-            <span class="btn-label">META</span>
-        </button>
-    </div>
+<div class="btn-grid">
+    <button class="btn-gen" id="btn-basic" onclick="generate('basic', this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        <span class="btn-label">BASIC</span>
+    </button>
+    <button class="btn-gen" id="btn-meta" onclick="generate('meta', this)">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"></path></svg>
+        <span class="btn-label">META</span>
+    </button>
+</div>
+<div class="social-row">
+    <button class="btn-gen" onclick="generate('fb', this)">
+        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        FB
+    </button>
+
+<button class="btn-gen" onclick="generate('threads', this)">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="12" cy="12" r="4"></circle>
+  <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"></path>
+</svg>        <span>THREADS</span>
+    </button>
+	
+    <button class="btn-gen" onclick="generate('tw', this)">
+        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932 6.064-6.932zm-1.292 19.494h2.039L6.486 3.24H4.298l13.311 17.407z"/></svg>
+        TWITTER
+    </button>
+</div>
 
     <div id="result-area">
         <button id="copyBtn" class="copy-all-btn" onclick="copyAll()">
@@ -360,14 +429,22 @@
     }
 
 async function generate(mode, btn) {
-    const t = document.getElementById('title').value, 
-          i = document.getElementById('img').value, 
-          d = realDestUrl, 
-          q = parseInt(document.getElementById('qty').value);
+    const t = document.getElementById('title').value;
+    const i = document.getElementById('img').value;
+    const d = realDestUrl; 
+    const q = parseInt(document.getElementById('qty').value);
 
     if(!t || !i || !d) return showToast("⚠️ Fill all fields!");
 
     const originalHtml = btn.innerHTML;
+    
+    // Tampilkan Spinner SVG yang modern
+    btn.style.pointerEvents = "none";
+    btn.innerHTML = `
+        <svg class="btn-spinner" viewBox="0 0 50 50">
+            <circle cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+        </svg>
+    `;
 
     try {
         let urlSource = currentVer === 1 ? CONFIG.domainsV1 : (currentVer === 2 ? CONFIG.domainsV2 : CONFIG.domainsV3);
@@ -375,52 +452,59 @@ async function generate(mode, btn) {
         const domains = await r.json();
         
         lastResults = [];
+
         for(let n=0; n<q; n++) {
             let dom = domains[Math.floor(Math.random() * domains.length)].replace(/\/$/, "");
             if(!dom.startsWith('http')) dom = 'https://' + dom;
             
             let finalPayload = "";
-            
             if (currentVer === 1) {
-                // V1 sesuai kode Worker Anda: JSON.parse(atob(...))
-                // Format: {"t":"judul", "i":"gambar", "d":"link"}
                 const dataObj = { t: t, i: i, d: d };
                 finalPayload = btoa(unescape(encodeURIComponent(JSON.stringify(dataObj))));
-            } 
-            else if (currentVer === 2) {
-                // V2 sesuai path V2.txt: split('|||')
+            } else if (currentVer === 2) {
                 const domainDisplay = new URL(dom).hostname.toUpperCase();
-                const desc = "Klik untuk menonton...";
-                const dataString = `${t}|||${domainDisplay}|||${desc}|||${i}|||${d}`;
+                const dataString = `${t}|||${domainDisplay}|||Klik untuk menonton...|||${i}|||${d}`;
                 finalPayload = btoa(unescape(encodeURIComponent(dataString)));
-            } 
-            else if (currentVer === 3) {
-                // V3 sesuai path V3.txt: URLSearchParams
+            } else if (currentVer === 3) {
                 const params = new URLSearchParams();
-                params.set('u', d);
-                params.set('t', t);
-                params.set('i', i);
+                params.set('u', d); params.set('t', t); params.set('i', i);
                 finalPayload = btoa(params.toString());
             }
 
             let finalUrl = `${dom}/${finalPayload}`;
-            if(mode === 'meta') finalUrl = `[url:${finalUrl}]`;
+            if (mode === 'meta') finalUrl = `[url:${finalUrl}]`;
+            else if (mode === 'fb') finalUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(finalUrl)}`;
+            else if (mode === 'threads') finalUrl = `https://www.threads.net/intent/post?text=${encodeURIComponent(t + "\n" + finalUrl)}`;
+            else if (mode === 'tw') finalUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(finalUrl)}&text=${encodeURIComponent(t)}`;
+            
             lastResults.push(finalUrl);
         }
 
-        if(q === 1) {
-            navigator.clipboard.writeText(lastResults[0]);
-            btn.classList.add('copied');
-            btn.innerHTML = `${icoCheck} COPIED`;
-            setTimeout(() => { 
-                btn.classList.remove('copied'); 
-                btn.innerHTML = originalHtml; 
-            }, 2000);
-            showToast("⚡ Copied!");
-        } else {
-            document.getElementById('result-area').classList.add('show');
-        }
+        // Delay 850ms agar animasi spinner terlihat "berusaha" memproses data
+        setTimeout(() => {
+            if(q === 1) {
+                navigator.clipboard.writeText(lastResults[0]);
+                btn.classList.add('copied');
+                btn.innerHTML = `${icoCheck} COPIED`;
+                
+                setTimeout(() => { 
+                    btn.classList.remove('copied'); 
+                    btn.innerHTML = originalHtml; 
+                    btn.style.pointerEvents = "auto";
+                }, 2000);
+                showToast("⚡ URL Copied!");
+            } else {
+                btn.innerHTML = originalHtml;
+                btn.style.pointerEvents = "auto";
+                document.getElementById('result-area').classList.add('show');
+                showToast("✅ Multi-links Generated!");
+            }
+        }, 850);
+
     } catch(e) { 
+        console.error(e);
+        btn.innerHTML = originalHtml;
+        btn.style.pointerEvents = "auto";
         showToast("❌ Error!"); 
     }
 }
