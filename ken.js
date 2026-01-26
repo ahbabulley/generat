@@ -160,8 +160,8 @@
     `;
     document.body.insertAdjacentHTML('beforeend', loginHTML);
 
-    const MASTER_KEY = "rowx2026";
-    let imgList = [];
+const _0xKEY = "cm93eDIwMjY="; 
+	let imgList = [];
     let activeLayer = 1;
 
     // LOVE AMBYAR LOGIC
@@ -220,8 +220,7 @@ function handleAuth() {
     const screen = document.getElementById('login-screen');
     const form = document.getElementById('form-container');
 
-    if(passwordInput.value === MASTER_KEY) {
-        // 1. Animasi keluar layar login
+if(btoa(passwordInput.value) === _0xKEY) {
         screen.style.opacity = '0'; 
         screen.style.transform = 'scale(1.1)';
         screen.style.pointerEvents = 'none';
