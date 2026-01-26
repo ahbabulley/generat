@@ -215,20 +215,33 @@
         };
     }
 
-    function handleAuth() {
-        if(document.getElementById('app_password').value === MASTER_KEY) {
-            const screen = document.getElementById('login-screen');
-            screen.style.opacity = '0'; screen.style.transform = 'scale(1.1)';
-            setTimeout(() => { screen.style.display = 'none'; document.body.classList.add('logged-in'); }, 1000);
-        } else {
-            document.getElementById('form-container').style.animation = 'shake 0.4s ease';
-            setTimeout(() => document.getElementById('form-container').style.animation = '', 400);
-        }
-    }
+function handleAuth() {
+    const passwordInput = document.getElementById('app_password');
+    const screen = document.getElementById('login-screen');
+    const form = document.getElementById('form-container');
 
+    if(passwordInput.value === MASTER_KEY) {
+        // 1. Animasi keluar layar login
+        screen.style.opacity = '0'; 
+        screen.style.transform = 'scale(1.1)';
+        screen.style.pointerEvents = 'none';
+
+        // 2. Munculkan dashboard sedikit lebih cepat sebelum screen login benar-benar hilang
+        setTimeout(() => {
+            document.body.classList.add('logged-in');
+        }, 400); // Jeda pendek agar transisinya terasa menyatu (overlap)
+
+        // 3. Hapus elemen login dari DOM setelah transisi selesai
+        setTimeout(() => { 
+            screen.remove(); 
+        }, 1200);
+    } else {
+        form.style.animation = 'shake 0.4s ease';
+        setTimeout(() => form.style.animation = '', 400);
+    }
+}
     initGallery();
     document.getElementById('login-btn').addEventListener('click', handleAuth);
     document.getElementById('app_password').addEventListener('keypress', (e) => { if(e.key === "Enter") handleAuth(); });
 })();
-
 
