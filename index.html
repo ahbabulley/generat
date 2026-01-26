@@ -7,6 +7,25 @@
     <link rel="icon" href="sarong.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
    <style>
+.container { 
+    opacity: 0; 
+    visibility: hidden; /* Sembunyi tapi tetap menjaga alur render */
+    filter: blur(30px);
+    transform: scale(0.95);
+    transition: all 1.5s cubic-bezier(0.19, 1, 0.22, 1); /* Efek masuk yang mewah */
+    pointer-events: none;
+    position: relative;
+    z-index: 10;
+}
+
+/* State ketika sudah berhasil login */
+body.logged-in .container { 
+    opacity: 1; 
+    visibility: visible;
+    filter: blur(0);
+    transform: scale(1);
+    pointer-events: auto;
+}
         :root {
             --bg-overlay: rgba(255, 255, 255, 0.25); 
             --card: rgba(255, 255, 255, 0.85); 
